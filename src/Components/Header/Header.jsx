@@ -3,6 +3,7 @@ import "./Header.css";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { NavLink } from "react-router-dom";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -34,14 +35,13 @@ const Header = () => {
                 </Disclosure.Button>
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex flex-shrink-0 items-center">
-                
+                <div className="flex gap-2 flex-shrink-0 items-center">
                   <img
                     className="h-8 w-auto"
                     src="/odf.svg"
                     alt="Your Company"
                   />
-                  <h2 className="text-white m-1">Bulletin Board</h2>
+                  <h2 className="text-white m-1 logo-name text-lg hidden lg:inline-block">Bulletin Board</h2>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -64,6 +64,8 @@ const Header = () => {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <NavLink to="post">
+                {/* <a href="posts"> */}
                 <button className="btn-hover color-9 flex items-center justify-center gap-1">
                   <span>
                     <svg
@@ -83,6 +85,8 @@ const Header = () => {
                   </span>{" "}
                   Post
                 </button>
+                </NavLink>
+                {/* </a> */}
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import './Home.css'
 
 export const Home = () => {
   return (
-    <main>
+    <main style={{minHeight: "570px"}}>
     <PostLists />
 
     </main>
