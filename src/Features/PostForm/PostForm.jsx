@@ -6,29 +6,31 @@ import { useNavigate } from "react-router-dom";
 
 const PostForm = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [location, setlocation] = useState("");
+  const [gender, setGender] = useState("");
 
   const nameChange = (e) => setName(e.target.value);
   const titleChange = (e) => setTitle(e.target.value);
   const contentChange = (e) => setContent(e.target.value);
   const locationChange = (e) => setlocation(e.target.value);
+  const genderChange = (e) => setGender(e.target.value);
   // const
 
+  const canSave = Boolean(title) && Boolean(content);
+
   const onSavePost = () => {
-    if (title && content ) {
-      dispatch(
-        postAdded(title, content, name, location)
-      )
+    if (title && content) {
+      dispatch(postAdded(title, content, name, location, gender));
       setTitle("");
       setContent("");
       setlocation("");
       setName("");
-      navigate('/');
+      navigate("/");
     }
   };
 
@@ -82,13 +84,31 @@ const PostForm = () => {
               placeholder="Paris"
               value={location}
               onChange={locationChange}
-              className="w-3/4 rounded-lg placeholder:text-gray-400 bg-slate-200 mb-12 border-none"
+              className="w-3/4 rounded-lg placeholder:text-gray-400 bg-slate-200 mb-3 border-none"
               type="text"
             />
 
+            <p className="font-semibold text-xl pb-3">Gender:</p>
+            <select
+              value={gender}
+              onChange={genderChange}
+              className="block mb-12 rounded-lg"
+              name="gender"
+              id=""
+            >
+            <option value=""></option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+
             <button
               onClick={onSavePost}
-              className="block w-3/4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md py-3"
+              disabled={!canSave}
+              className={`block w-3/4 rounded-md py-3 ${
+                !canSave
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700 text-white"
+              }`}
             >
               Save Post
             </button>

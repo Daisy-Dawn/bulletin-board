@@ -1,9 +1,14 @@
 import { useSelector } from "react-redux";
 import { selectAllPosts } from "./PostSlice";
+import TimeAgo from "./TimeAgo";
+import ReactionButtons from "./ReactionButtons";
 
 const PostLists = () => {
   const posts = useSelector(selectAllPosts);
-  const renderedPosts = posts.map((post) => (
+
+  const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
+
+  const renderedPosts = orderedPosts.map((post) => (
     <article
       className="w-full bg-white my-5 rounded-lg p-5 flex gap-2 items-center"
       key={post.id}
@@ -11,10 +16,10 @@ const PostLists = () => {
       <span className="">
         <img
           className="inline-block mb-2 h-8 w-8 rounded-full ring-2 ring-slate-900"
-          src={post.avatar}
+          src={post.gender === "" ? "https://res.cloudinary.com/di3p64c4o/image/upload/v1702781344/1389952697_tx2fdc.svg" : post.avatar}
           alt=""
         />
-        <p>{post.name} </p>
+        <p>{post.name || "Anonymous"} </p>
       </span>
       <div className="">
         <h3 className="pb-3 text-2xl font-bold">{post.title}</h3>
@@ -24,7 +29,9 @@ const PostLists = () => {
         >
           {post.content}
         </p>
-        <p> {post.location} </p>
+        <p> {post.location || "Unknown Location"} </p>
+        <TimeAgo timeStamp={post.date} />
+        <ReactionButtons post={post} />
       </div>
     </article>
   ));
