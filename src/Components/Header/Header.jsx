@@ -17,6 +17,7 @@ function classNames(...classes) {
 
 const Header = () => {
   return (
+    <div className="sticky top-0">
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
@@ -114,6 +115,7 @@ const Header = () => {
         </>
       )}
     </Disclosure>
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ const TimeAgo = ( {timeStamp} ) => {
         timeAgo = `${timePeriod} ago`
     }
   return (
-    <div title={timeStamp}> &nbsp;
+    <div className='text-xs sm:text-base' title={timeStamp}> &nbsp;
         <i >{timeAgo} </i>
     </div>
   )

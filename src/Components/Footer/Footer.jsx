@@ -8,7 +8,7 @@ export const Footer = () => {
   const date = new Date();
   const year = date.getFullYear()
   return (
-    <footer className="bg-gray-900 text-white px-2 lg:px-8 footer-wrapper w-full flex flex-wrap py-3 border-t items-center justify-between">
+    <footer className="bg-gray-900 text-white px-2 lg:px-8 footer-wrapper mt-3 bottom-0 w-full flex flex-wrap py-3 border-t items-center justify-between">
       <div className="flex items-center gap-2 lg:gap-4 grid-cols-4">
         <span className="lg:mb-3 mb-1">
           <img className="lg:h-8 h-6 w-auto" src="/odf.svg" alt="Your Company" />
