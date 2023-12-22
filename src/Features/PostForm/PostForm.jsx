@@ -33,35 +33,35 @@ const PostForm = () => {
         const firstName = processedName.slice(0, spaceIndex);
         const lastName = processedName.slice(spaceIndex + 1);
   
-        if (firstName.length > 7 && lastName.length <= 7) {
+        if (firstName.length > 15 && lastName.length <= 15) {
           const useInitials = window.confirm(
-            `First name is more than 7 letters in length. Do you want to use initials instead?`
+            `First name is more than 15 letters in length. Do you want to use initials instead?`
           );
   
           if (useInitials) {
             processedName = `${firstName.slice(0, 1).toUpperCase()} ${lastName}`;
           }
-        } else if (lastName.length > 7 && firstName.length <= 7) {
+        } else if (lastName.length > 15 && firstName.length <= 15) {
           const useInitials = window.confirm(
-            `Last name is more than 7 letters in length. Do you want to use initials instead?`
+            `Last name is more than 15 letters in length. Do you want to use initials instead?`
           );
   
           if (useInitials) {
             processedName = `${firstName} ${lastName.slice(0, 1).toUpperCase()}`;
           }
-        } else if (firstName.length > 7 && lastName.length > 7) {
+        } else if (firstName.length > 15 && lastName.length > 15) {
           const useInitials = window.confirm(
-            `Both first and last names are more than 7 letters in length. Do you want to use initials for both?`
+            `Both first and last names are more than 15 letters in length. Do you want to use initials for both?`
           );
   
           if (useInitials) {
             processedName = `${firstName.slice(0, 1).toUpperCase()} ${lastName.slice(0, 1).toUpperCase()}`;
           }
         }
-      } else if (processedName.length > 7) {
+      } else if (processedName.length > 15) {
         // If there's no space but the name is too long
         const useInitials = window.confirm(
-          `Name is more than 7 letters in length. Do you want to use initials instead?`
+          `Name is more than 15 letters in length. Do you want to use initials instead?`
         );
   
         if (useInitials) {
