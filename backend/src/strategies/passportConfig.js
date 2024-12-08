@@ -29,9 +29,9 @@ passport.use(
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: process.env.CALLBACK_URL,
         },
-        async (accessToke, refreshToken, profile, done) => {
+        async (accessToken, refreshToken, profile, done) => {
             try {
-                let user = User.findOne({ googleId: profile.id })
+                let user = await User.findOne({ googleId: profile.id }) // Await this query
                 if (!user) {
                     user = await User.create({
                         googleId: profile.id,
@@ -47,6 +47,7 @@ passport.use(
         }
     )
 )
+
 //serialize user into session
 passport.serializeUser((user, done) => done(null, user.id))
 
@@ -59,5 +60,9 @@ passport.deserializeUser(async (id, done) => {
         done(err, null)
     }
 })
+
+console.log(process.env.GOOGLE_CLIENT_ID)
+console.log(process.env.GOOGLE_CLIENT_SECRET)
+console.log(process.env.CALLBACK_URL)
 
 module.exports = passport

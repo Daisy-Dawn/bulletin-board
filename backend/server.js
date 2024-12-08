@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
@@ -9,7 +10,7 @@ const { handleSessionErrors } = require('./src/middlewares/sessionmiddlewares')
 const passport = require('./src/strategies/passportConfig')
 const router = require('./src/routes/index')
 
-dotenv.config()
+// dotenv.config()
 
 const app = express()
 
