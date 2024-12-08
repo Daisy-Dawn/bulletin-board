@@ -48,7 +48,13 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(session())
-app.use(cors())
+
+app.use(
+    cors({
+        origin: 'https://bulletin-board-iota.vercel.app',
+        credentials: true,
+    })
+)
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(handleSessionErrors)
 app.use(passport.initialize())
