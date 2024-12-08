@@ -17,6 +17,8 @@ const {
     registerLimiter,
     loginLimiter,
 } = require('../middlewares/rate-limit-middleware')
+const passport = require('passport')
+const { generateToken, verifyToken } = require('../utils/jwt-config')
 const usersRouter = express.Router()
 
 //middleware to handlevalidation errors
@@ -30,11 +32,11 @@ const handleValidationErrors = (req, res, next) => {
 
 //CREATE A NEW USER
 usersRouter.post(
-    '/api/register',
-    validateUserCreation,
-    handleValidationErrors,
-    registerLimiter,
-    async (req, res, next) => {
+    '/auth/register',
+    validateUserCreation, // Middleware to validate user input
+    handleValidationErrors, // Middleware to handle validation errors
+    registerLimiter, // Rate limiter for signup
+    async (req, res) => {
         const { username, displayName, email, password } = req.body
 
         try {
@@ -54,7 +56,7 @@ usersRouter.post(
                 })
             }
 
-            // Hash the password using the helper function
+            // Hash the password using the bcrypt
             const hashedPassword = await hashPassword(password)
 
             // Create new user
@@ -65,65 +67,76 @@ usersRouter.post(
                 password: hashedPassword,
             })
 
-            // Attach user to req for the session middleware
-            req.user = newUser
+            // Generate a JWT token for the new user
+            const token = generateToken(newUser)
 
-            // Proceed to the session middleware
-            next()
+            // Respond with the token and user details
+            res.status(201).json({
+                message: 'Registration successful',
+                token,
+                user: {
+                    id: newUser.id,
+                    username: newUser.username,
+                    displayName: newUser.displayName,
+                    email: newUser.email,
+                },
+            })
         } catch (err) {
             res.status(500).json({
                 error: 'An error occurred while creating the user',
                 message: err.message,
             })
         }
-    },
-    saveUserSessionAndCookieSetter, // Middleware to save session and set cookie
+    }
+)
+
+//GOOGLE AUTH
+usersRouter.get(
+    '/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+)
+
+//CALLBACK FOR GOOGLE AUTH
+usersRouter.get(
+    '/google/callback',
+    passport.authenticate('google', { session: false }),
     (req, res) => {
-        // Final response after session and cookie setup
-        const { id, username, displayName, email } = req.session.user
-        res.status(201).json({
-            message: 'Registration successful and user logged in',
-            user: { id, username, displayName, email },
+        // Generate a token for the authenticated user
+        const token = generateToken(req.user)
+
+        // Send the token and user details in the response
+        res.status(200).json({
+            message: 'Google OAuth successful',
+            token,
+            user: {
+                id: req.user.id,
+                username: req.user.username,
+                displayName: req.user.displayName,
+                email: req.user.email,
+            },
         })
     }
 )
 
-//LOGIN A USER
+//LOCAL LOGIN
 usersRouter.post(
-    '/api/login',
+    '/auth/login',
     loginLimiter,
-    async (req, res, next) => {
-        const { username, password } = req.body
+    passport.authenticate('local'),
 
-        try {
-            const user = await User.findOne({ username }).select('+password')
-            if (!user) return res.status(404).json({ error: 'User not found' })
+    async (req, res) => {
+        // Generate a token for the authenticated user
+        const token = generateToken(req.user)
 
-            // Compare hashed password & password check
-            const passwordMatch = await comparePassword(password, user.password)
-            if (!passwordMatch) {
-                return res.status(401).json({ error: 'Invalid Credentials' })
-            }
-
-            // Attach user to req for the session middleware
-            req.user = user
-
-            // Proceed to the session middleware
-            next()
-        } catch (err) {
-            res.status(500).json({
-                error: 'Internal Server Error',
-                message: err.message,
-            })
-        }
-    },
-    saveUserSessionAndCookieSetter,
-    (req, res) => {
-        // Final response after session and cookie setup
-        const { id, username, displayName } = req.session.user
+        // Send the token, user info, and success message as the response
         res.status(200).json({
             message: 'Login successful',
-            user: { id, username, displayName },
+            token,
+            user: {
+                id: req.user.id,
+                username: req.user.username,
+                displayName: req.user.displayName,
+            },
         })
     }
 )
@@ -131,7 +144,7 @@ usersRouter.post(
 //GET ALL USERS AND FILTER TOO
 usersRouter.get(
     '/api/users',
-    requireAuth,
+    verifyToken,
     validateGetUsersQuery,
     handleValidationErrors,
     async (req, res) => {
@@ -168,7 +181,7 @@ usersRouter.get(
 //GET A SINGLE USER BY ID
 usersRouter.get(
     '/api/users/:id',
-    requireAuth,
+    verifyToken,
     validateUserId,
     handleValidationErrors,
     async (req, res) => {
@@ -193,7 +206,7 @@ usersRouter.get(
 //UPDATE A USER INFO
 usersRouter.patch(
     '/api/users/:id',
-    requireAuth,
+    verifyToken,
     validateUserId,
     validateUserUpdate,
     handleValidationErrors,
@@ -225,7 +238,7 @@ usersRouter.patch(
 //DELETE A USER
 usersRouter.delete(
     '/api/users/:id',
-    requireAuth,
+    verifyToken,
     validateUserId,
     handleValidationErrors,
     async (req, res) => {
@@ -247,7 +260,7 @@ usersRouter.delete(
 )
 
 //USER LOGOUT
-usersRouter.post('/api/logout', requireAuth, (req, res) => {
+usersRouter.post('/api/logout', verifyToken, (req, res) => {
     req.session.destroy((err) => {
         if (err)
             return res
@@ -261,7 +274,7 @@ usersRouter.post('/api/logout', requireAuth, (req, res) => {
 })
 
 //GET ALL SESSION DATA
-usersRouter.get('/api/admin/me', requireAuth, (req, res) => {
+usersRouter.get('/api/admin/me', verifyToken, (req, res) => {
     res.status(200).json({
         message: 'Users session data',
         user: req.session.user,

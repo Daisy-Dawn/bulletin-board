@@ -6,6 +6,7 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const cookieParser = require('cookie-parser')
 const { handleSessionErrors } = require('./src/middlewares/sessionmiddlewares')
+const passport = require('./src/strategies/passportConfig')
 const router = require('./src/routes/index')
 
 dotenv.config()
@@ -50,6 +51,8 @@ app.use(session())
 app.use(cors())
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(handleSessionErrors)
+app.use(passport.initialize())
+// app.use(passport.session())
 app.use(router)
 
 // Routes
