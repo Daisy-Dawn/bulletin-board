@@ -98,7 +98,7 @@ usersRouter.get(
 
 //CALLBACK FOR GOOGLE AUTH
 usersRouter.get(
-    '/google/callback',
+    '/auth/google/callback',
     passport.authenticate('google', { session: false }),
     (req, res) => {
         // Generate a token for the authenticated user
