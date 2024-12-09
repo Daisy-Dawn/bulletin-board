@@ -12,8 +12,6 @@ const passport = require('passport')
 const dropIndexIfExists = require('./src/utils/dropGoogleIdIndex')
 const router = require('./src/routes/index')
 
-// dotenv.config()
-
 const app = express()
 
 //connect to mongoose

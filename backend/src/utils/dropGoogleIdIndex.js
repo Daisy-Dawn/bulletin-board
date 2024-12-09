@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const dropIndexIfExists = async () => {
     try {
         const indexes = await mongoose.connection.db
