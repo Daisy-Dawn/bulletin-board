@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema(
     {
-        googleId: { type: String, unique: true },
+        googleId: { type: String, unique: true, sparse: true }, // Add `sparse: true
         displayName: { type: String, required: true },
         username: { type: String, unique: true, required: true },
         email: { type: String, unique: true, required: true },

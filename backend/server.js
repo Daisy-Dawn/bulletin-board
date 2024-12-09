@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser')
 const { handleSessionErrors } = require('./src/middlewares/sessionmiddlewares')
 const passportConfig = require('./src/strategies/passportConfig')
 const passport = require('passport')
+const dropIndexIfExists = require('./src/utils/dropGoogleIdIndex')
 const router = require('./src/routes/index')
 
 // dotenv.config()
@@ -20,6 +21,7 @@ const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
         console.log('MongoDB connected successfully!')
+        await dropIndexIfExists()
     } catch (err) {
         console.error('MongoDB connection failed:', err.message)
         process.exit(1) // Exit the process if connection fails
