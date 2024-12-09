@@ -99,12 +99,14 @@ usersRouter.get(
 //CALLBACK FOR GOOGLE AUTH
 usersRouter.get(
     '/auth/google/callback',
+    (req, res, next) => {
+        console.log('Google callback route hit')
+        next()
+    },
     passport.authenticate('google', { session: false }),
     (req, res) => {
-        // Generate a token for the authenticated user
+        console.log('User authenticated:', req.user)
         const token = generateToken(req.user)
-
-        // Send the token and user details in the response
         res.status(200).json({
             message: 'Google OAuth successful',
             token,
