@@ -13,17 +13,29 @@ const generateToken = (user) => {
 }
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token)
-        return res.status(401).json({ error: 'Access denied, unauthorized' })
+    // Get token from Authorization header or cookies
+    const token = req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.split(' ')[1]
+        : req.cookies?.token
 
-    // Verifying the JWT using the secret
+    if (!token) {
+        return res.status(401).json({ error: 'Access denied, unauthorized' })
+    }
+
     try {
+        // Verify the token and attach the payload to req.user
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = decoded //Attach user info to request
+
+        // Optionally validate decoded structure
+        if (!decoded.id || !decoded.username || !decoded.displayName) {
+            return res.status(401).json({ error: 'Invalid token structure' })
+        }
+
+        req.user = decoded
         next()
     } catch (err) {
-        return res.status(401).json({ message: 'Invalid token' })
+        return res.status(401).json({ message: 'Invalid or expired token' })
     }
 }
+
 module.exports = { generateToken, verifyToken }

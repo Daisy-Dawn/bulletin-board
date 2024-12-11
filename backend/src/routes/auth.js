@@ -10,7 +10,7 @@ const {
 const { hashPassword } = require('../utils/hashPasswords')
 const passport = require('passport')
 const { generateToken, verifyToken } = require('../utils/jwt-config')
-const { upload } = require('../strategies/cloudinaryConfig')
+const { upload } = require('../config/cloudinaryConfig')
 const User = require('../models/User')
 
 const auth = express.Router()
