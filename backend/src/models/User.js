@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema(
                 return !this.googleId
             },
         }, // Required only for non-Google users
+        profilePicture: { type: String, default: '' },
+        location: { type: String, default: '' },
     },
     { timestamps: true }
 )

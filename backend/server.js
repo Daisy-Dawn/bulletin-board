@@ -31,7 +31,7 @@ connectDB()
 // use session middleware
 app.use(
     session({
-        secret: process.env.SESSION_SECRET, // Ensure this is set in your .env file
+        secret: process.env.SESSION_SECRET,
         resave: false, // Prevents the session from being saved if it is not modified
         saveUninitialized: false, // Avoid saving sessions that are not initialized
         store: MongoStore.create({

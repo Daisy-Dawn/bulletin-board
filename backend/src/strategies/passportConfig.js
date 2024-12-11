@@ -2,7 +2,8 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 const User = require('../models/User')
-const GoogleStrategy = require('passport-google-oauth20').Strategy
+const GoogleStrategy = require('passport-google-oauth20')
+const { comparePassword } = require('../utils/hashPasswords')
 
 //LOCAL STRATEGY
 passport.use(
@@ -11,7 +12,8 @@ passport.use(
             const user = await User.findOne({ username })
             if (!user) return done(null, false, { message: 'User not found' })
 
-            const isMatch = await bcrypt.compare(password, user.password)
+            // const isMatch = await bcrypt.compare(password, user.password)
+            const isMatch = await comparePassword(password, user.password)
             if (!isMatch)
                 return done(null, false, { message: 'Invalid Password' })
             return done(null, user)
@@ -38,6 +40,8 @@ passport.use(
                         displayName: profile.displayName,
                         username: profile.emails[0].value.split('@')[0],
                         email: profile.emails[0].value,
+                        profilePicture: profile.photos?.[0]?.value || '', // Get profile picture or default to empty string
+                        location: 'anywhere', // Default location
                     })
                 }
                 done(null, user)
