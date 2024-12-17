@@ -10,6 +10,12 @@ const { handleSessionErrors } = require('./src/middlewares/sessionmiddlewares')
 const passportConfig = require('./src/config/passportConfig')
 const passport = require('passport')
 const dropIndexIfExists = require('./src/utils/dropGoogleIdIndex')
+const migrateReactions = require('./src/utils/addUserIdFieldsToReactions')
+const {
+    updateLikesSchema,
+    migrateReactionsToLikes,
+    migrateCommentsandReplies,
+} = require('./src/migrations/migrations')
 const router = require('./src/routes/index')
 
 const app = express()
@@ -20,6 +26,10 @@ const connectDB = async () => {
         await mongoose.connect(process.env.MONGO_URI)
         console.log('MongoDB connected successfully!')
         await dropIndexIfExists()
+        // await migrateReactions()
+        await updateLikesSchema()
+        await migrateReactionsToLikes()
+        // await migrateOriginalCommentsSchema()
     } catch (err) {
         console.error('MongoDB connection failed:', err.message)
         process.exit(1) // Exit the process if connection fails
@@ -61,6 +71,18 @@ app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(handleSessionErrors)
 app.use(passport.initialize())
 // app.use(passport.session())
+
+app.use((req, res, next) => {
+    res.set({
+        'Cache-Control':
+            'no-store, no-cache, must-revalidate, proxy-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+        'Surrogate-Control': 'no-store',
+    })
+    next()
+})
+
 app.use(router)
 
 // Routes

@@ -8,6 +8,7 @@ const {
 } = require('../middlewares/uservalidations')
 const { verifyToken } = require('../utils/jwt-config')
 const { hashPassword } = require('../utils/hashPasswords')
+const paginationMiddleware = require('../middlewares/pagination-middleware')
 const usersRouter = express.Router()
 
 //GET ALL USERS AND FILTER TOO
@@ -16,6 +17,7 @@ usersRouter.get(
     verifyToken,
     validateGetUsersQuery,
     handleValidationErrors,
+    paginationMiddleware(User),
     async (req, res) => {
         const { username, displayName } = req.query
 
@@ -40,7 +42,7 @@ usersRouter.get(
             }
 
             // Return the filtered users
-            res.status(200).json(users)
+            res.status(200).json(res.paginatedResults)
         } catch (err) {
             res.status(500).json({ error: err.message })
         }
