@@ -1,0 +1,15 @@
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+:root {
+    --background: #1e1f24;
+    --foreground: #fefefe;
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+}

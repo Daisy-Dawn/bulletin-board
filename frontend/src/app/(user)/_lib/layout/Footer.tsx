@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Footer = () => {
-    return <div>Footer</div>
+    return <div className="border-x-[1px] border-lineGrey">Footer</div>
 }
 
 export default Footer
