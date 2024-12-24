@@ -11,11 +11,11 @@ const passportConfig = require('./src/config/passportConfig')
 const passport = require('passport')
 const dropIndexIfExists = require('./src/utils/dropGoogleIdIndex')
 const migrateReactions = require('./src/utils/addUserIdFieldsToReactions')
-const {
-    updateLikesSchema,
-    migrateReactionsToLikes,
-    migrateCommentsandReplies,
-} = require('./src/migrations/migrations')
+// const {
+//     updateLikesSchema,
+//     migrateReactionsToLikes,
+//     migrateCommentsandReplies,
+// } = require('./src/migrations/migrations')
 const router = require('./src/routes/index')
 
 const app = express()
@@ -27,8 +27,8 @@ const connectDB = async () => {
         console.log('MongoDB connected successfully!')
         await dropIndexIfExists()
         // await migrateReactions()
-        await updateLikesSchema()
-        await migrateReactionsToLikes()
+        // await updateLikesSchema()
+        // await migrateReactionsToLikes()
         // await migrateOriginalCommentsSchema()
     } catch (err) {
         console.error('MongoDB connection failed:', err.message)

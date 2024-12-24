@@ -1,6 +1,6 @@
 import { Avatar } from '@mui/material'
 import React from 'react'
-import avatar from '../../app/(user)/_lib/images/avatar.jpg'
+import avatar from '../../../app/dashboard/_lib/images/avatar.jpg'
 
 const MyCommunity = () => {
     return (

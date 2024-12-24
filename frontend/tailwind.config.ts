@@ -22,6 +22,7 @@ export default {
                 primary: '#ff5fa9',
                 red: '#f44336',
                 yellow: '#ffc107',
+                secondary: '#D7DEFE',
             },
         },
     },

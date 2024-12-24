@@ -14,27 +14,29 @@ const generateToken = (user) => {
 
 const verifyToken = (req, res, next) => {
     // Get token from Authorization header or cookies
-    const token = req.headers.authorization?.startsWith('Bearer ')
-        ? req.headers.authorization.split(' ')[1]
-        : req.cookies?.token
+    // const token = req.headers.authorization?.startsWith('Bearer ')
+    //     ? req.headers.authorization.split(' ')[1]
+    //     : req.cookies?.token || req.signedCookies?.userid
+
+    const token = req.signedCookies?.userid
 
     if (!token) {
-        return res.status(401).json({ error: 'Access denied, unauthorized' })
+        return res.redirect('/auth/login') // Redirect if no token is found
     }
 
     try {
-        // Verify the token and attach the payload to req.user
+        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-        // Optionally validate decoded structure
+        // Optionally validate the decoded structure
         if (!decoded.id || !decoded.username || !decoded.displayName) {
-            return res.status(401).json({ error: 'Invalid token structure' })
+            return res.redirect('/auth/login') // Redirect if token structure is invalid
         }
 
-        req.user = decoded
+        req.user = decoded // Attach the user payload to the request object
         next()
     } catch (err) {
-        return res.status(401).json({ message: 'Invalid or expired token' })
+        return res.redirect('/auth/login') // Redirect if token verification fails
     }
 }
 

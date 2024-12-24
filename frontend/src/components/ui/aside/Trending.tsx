@@ -3,7 +3,7 @@ import React from 'react'
 const Trending = () => {
     return (
         <div className="w-full border-[1px] flex flex-col gap-4 border-lineGrey rounded-lg py-4 px-3 bg-background">
-            <h2 className="text-[14px]">Today Trending</h2>
+            <h2 className="font-medium text-[15px] "> Trending Today</h2>
 
             {/* trend topics */}
             <div className="flex flex-col ">

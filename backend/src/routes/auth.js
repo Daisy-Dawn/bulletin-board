@@ -63,6 +63,14 @@ auth.post(
             // Generate a JWT token for the new user
             const token = generateToken(newUser)
 
+            // Set the signed cookie
+            res.cookie('userid', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                signed: true, // Sign the cookie
+                maxAge: 24 * 60 * 60 * 1000, // 1 day
+            })
+
             // Respond with the token and user details
             res.status(201).json({
                 message: 'Registration successful',
@@ -98,6 +106,15 @@ auth.get(
     (req, res) => {
         console.log('User authenticated:', req.user)
         const token = generateToken(req.user)
+
+        // Set the signed cookie
+        res.cookie('userid', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            signed: true, // Sign the cookie
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        })
+
         res.status(200).json({
             message: 'Google OAuth successful',
             token,
@@ -123,6 +140,14 @@ auth.post(
         // Generate a token for the authenticated user
         const token = generateToken(req.user)
 
+        // Set the signed cookie
+        res.cookie('userid', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            signed: true, // Sign the cookie
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        })
+
         // Send the token, user info, and success message as the response
         res.status(200).json({
             message: 'Login successful',
@@ -144,6 +169,7 @@ auth.post('/auth/logout', verifyToken, (req, res) => {
                 .status(500)
                 .json({ error: 'Failed to logout', message: err.message })
         res.clearCookie('connect.sid') // clear session cookie
+        res.clearCookie('userid') // clear userid cookie
 
         res.clearCookie('userSession') // Clear the signed cookie
         res.status(200).json({ message: 'Logout successful' })

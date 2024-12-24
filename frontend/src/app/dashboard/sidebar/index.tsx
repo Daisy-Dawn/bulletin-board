@@ -8,10 +8,9 @@ import { IoHome } from 'react-icons/io5'
 import { HiUserGroup } from 'react-icons/hi'
 import { ImNewspaper } from 'react-icons/im'
 import { FaUsers } from 'react-icons/fa6'
-import { FaUserLarge } from 'react-icons/fa6'
 import { FaRegUser } from 'react-icons/fa6'
-import MyCommunity from '@/components/ui/MyCommunity'
-import UpcomingEvent from '@/components/ui/UpcomingEvent'
+import MyCommunity from '@/components/ui/sidebar/MyCommunity'
+import UpcomingEvent from '@/components/ui/sidebar/UpcomingEvent'
 
 const SideBar = () => {
     const { activePage, setActivePage } = useActivePage()
