@@ -63,10 +63,23 @@ app.use(session())
 
 app.use(
     cors({
-        origin: 'https://bulletin-board-iota.vercel.app',
-        credentials: true,
+        origin: function (origin, callback) {
+            const allowedOrigins = [
+                'https://bulletin-board-iota.vercel.app', // Production origin
+                'http://localhost:3000', // Development origin
+            ]
+
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        },
+        credentials: true, // Allow credentials (cookies, headers, etc.)
     })
 )
+
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(handleSessionErrors)
 app.use(passport.initialize())

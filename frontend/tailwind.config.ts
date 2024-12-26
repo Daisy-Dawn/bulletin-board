@@ -20,7 +20,7 @@ export default {
                 lighterGrey: '#32353c',
                 lineGrey: '#565758',
                 primary: '#ff5fa9',
-                red: '#f44336',
+                shoutyRed: '#f44336',
                 yellow: '#ffc107',
                 secondary: '#D7DEFE',
             },

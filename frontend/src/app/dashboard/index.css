@@ -24,3 +24,64 @@ body {
     width: 100%;
     height: 100%;
 }
+
+.login-background {
+    /* background-color: #0020bd; */
+    /* background-image: url('https://www.transparenttextures.com/patterns/shley-tree-1.png'); */
+    /* background-image: url('https://www.transparenttextures.com/patterns/gravel.png'); */
+    /* background-image: url('https://www.transparenttextures.com/patterns/football-no-lines.png'); */
+    /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+}
+
+.login-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 3, 21, 0.584);
+    z-index: -1;
+}
+
+#login-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.glass-background {
+    filter: drop-shadow(0px 39.874px 39.874px rgba(11, 25, 54, 0.584));
+    backdrop-filter: blur(15px);
+}
+
+.login-line-gradient {
+    background: hsla(42, 93%, 57%, 1);
+
+    background: linear-gradient(
+        90deg,
+        hsla(42, 93%, 57%, 1) 0%,
+        hsla(358, 78%, 62%, 1) 100%
+    );
+
+    background: -moz-linear-gradient(
+        90deg,
+        hsla(42, 93%, 57%, 1) 0%,
+        hsla(358, 78%, 62%, 1) 100%
+    );
+
+    background: -webkit-linear-gradient(
+        90deg,
+        hsla(42, 93%, 57%, 1) 0%,
+        hsla(358, 78%, 62%, 1) 100%
+    );
+
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#F7BA2C", endColorstr="#EA5459", GradientType=1 );
+}
+
+.login-button-glass-background {
+    filter: drop-shadow(0px 39.874px 39.874px rgba(134, 59, 114, 0.74));
+    backdrop-filter: blur(15px);
+    /* background: rgba(81, 73, 79, 0.42); */
+}

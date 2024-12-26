@@ -93,7 +93,7 @@ const Header = () => {
                         >
                             <FaBell size={16} />
                         </Avatar>
-                        <span className="absolute z-10 top-0 left-4 h-2 w-2 rounded-full bg-red"></span>
+                        <span className="absolute z-10 top-0 left-4 h-2 w-2 rounded-full bg-shoutyRed"></span>
                     </div>
 
                     <p
