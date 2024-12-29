@@ -70,7 +70,7 @@ auth.post(
             const refreshToken = generateRefreshToken(newUser)
 
             // Set the signed cookie
-            res.cookie('userid', accessToken, {
+            res.cookie('accessToken', accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 signed: true, // Sign the cookie
@@ -80,7 +80,8 @@ auth.post(
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                // sameSite: 'strict',
+                signed: true, // Sign the cookie
                 maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
             })
 
@@ -123,7 +124,7 @@ auth.get(
         const refreshToken = generateRefreshToken(req.user)
 
         // Set the signed cookie
-        res.cookie('userid', accessToken, {
+        res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             signed: true, // Sign the cookie
@@ -133,35 +134,31 @@ auth.get(
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            // sameSite: 'strict',
+            signed: true, // Sign the cookie
             maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
         res.cookie('user', JSON.stringify(req.user), {
             httpOnly: true, // Makes the cookie inaccessible to JavaScript
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'strict',
+            // sameSite: 'strict',
+            signed: true, // Sign the cookie
             maxAge: 12 * 60 * 60 * 1000, // 12 hours (you can adjust this as necessary)
         })
 
-        // Redirect to frontend with user info
-        res.redirect(`${process.env.DEVELOPMENT_URL}/auth/google/callback`)
-
-        // res.redirect(`http://localhost:3000/auth/google/callback`)
-        // res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
-
-        // res.status(200).json({
-        //     message: 'Google OAuth successful',
-        //     accessToken,
-        //     user: {
-        //         id: req.user.id,
-        //         username: req.user.username,
-        //         displayName: req.user.displayName,
-        //         email: req.user.email,
-        //         location: req.user.location || 'anywhere',
-        //         profilePicture: req.user.profilePicture || '',
-        //     },
-        // })
+        res.status(200).json({
+            message: 'Google OAuth successful',
+            accessToken,
+            user: {
+                id: req.user.id,
+                username: req.user.username,
+                displayName: req.user.displayName,
+                email: req.user.email,
+                location: req.user.location || 'anywhere',
+                profilePicture: req.user.profilePicture || '',
+            },
+        })
     }
 )
 
@@ -177,7 +174,7 @@ auth.post(
         const refreshToken = generateRefreshToken(req.user)
 
         // Set the signed cookie
-        res.cookie('userid', accessToken, {
+        res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             signed: true, // Sign the cookie
@@ -187,7 +184,8 @@ auth.post(
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            // sameSite: 'strict',
+            signed: true, // Sign the cookie
             maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
@@ -212,7 +210,7 @@ auth.post('/auth/logout', verifyToken, (req, res) => {
                 .status(500)
                 .json({ error: 'Failed to logout', message: err.message })
         res.clearCookie('connect.sid') // clear session cookie
-        res.clearCookie('userid') // clear userid cookie
+        res.clearCookie('accessToken') // clear accessToken cookie
         res.clearCookie('refreshToken') // clear refreshToken cookie
 
         res.clearCookie('userSession') // Clear the signed cookie

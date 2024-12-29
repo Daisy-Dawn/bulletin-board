@@ -18,9 +18,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const checkAuth = () => {
-            const userid = document.cookie
+            const accessToken = document.cookie
                 .split('; ')
-                .find((row) => row.startsWith('userid='))
+                .find((row) => row.startsWith('accessToken='))
                 ?.split('=')[1]
 
             const authToken = sessionStorage.getItem('authToken')

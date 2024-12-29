@@ -132,7 +132,7 @@ export default function Login() {
                 autoPlay
             ></video>
 
-            <div className="login-form w-1/3 min-h-[50vh] glass-background bg-opacity-30 rounded-xl z-30 shadow-lg flex flex-col gap-[2rem] items-center px-[3rem] py-[2.5rem]">
+            <div className="login-form w-1/3 min-h-[50vh] glass-background bg-opacity-30 rounded-xl z-30 shadow-lg flex flex-col gap-[1rem] items-center px-[3rem] py-[2.5rem]">
                 {/* logo */}
                 <div className="flex items-center gap-4">
                     <div className="w-[45px] h-[45px] flex justify-center items-center border-lineGrey border-[1px] bg-primary rounded-full">
@@ -149,12 +149,7 @@ export default function Login() {
                     </h2>
                 </div>
 
-                {/* sign in form */}
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex w-full flex-col gap-[1.5rem] text-secondary"
-                    // action="post"
-                >
+                <div className="flex w-full flex-col gap-[1.5rem] text-secondary">
                     {/* header text */}
                     <div className="text-center flex flex-col gap-1">
                         <h2 className="font-semibold text-[28px] ">
@@ -177,88 +172,95 @@ export default function Login() {
                         <p>Sign in with Google</p>
                     </button>
 
-                    {/* local login */}
-                    <div className="flex items-center justify-center gap-1">
-                        <div className="h-[1.5px]  w-full login-line-gradient"></div>
-                        <p className="w-full text-nowrap text-center">
-                            or login with username
-                        </p>
-                        <div className="h-[1.5px] w-full login-line-gradient"></div>
-                    </div>
-
-                    {/* username */}
-                    <div className="flex flex-col">
-                        <div className="flex gap-3 items-center border-[1px] rounded-md border-lineGrey py-[10px] px-[15px] ">
-                            <span className="">
-                                <FaUser size={19} />
-                            </span>
-                            <input
-                                className="outline-none w-full bg-transparent "
-                                type="text"
-                                name="username"
-                                placeholder="john-williams"
-                                value={formData.username}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        {errors.username && (
-                            <p className="text-red-400 text-[0.75rem]">
-                                {errors.username}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* password */}
-                    <div className="flex flex-col">
-                        <div className="flex gap-3 items-center justify-between border-[1px] rounded-md border-lineGrey py-[10px] px-[15px] ">
-                            <button type="button" className="">
-                                <HiLockOpen size={19} />
-                            </button>
-                            <input
-                                className="outline-none w-full bg-transparent "
-                                type={revealPassword ? 'text' : 'password'}
-                                name="password"
-                                placeholder="password12345"
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                            <button
-                                onClick={() => toggleRevealPassword()}
-                                type="button"
-                                className=""
-                            >
-                                {revealPassword ? (
-                                    <FaRegEye size={19} />
-                                ) : (
-                                    <FaRegEyeSlash />
-                                )}
-                            </button>
-                        </div>
-
-                        {errors.password && (
-                            <p className="text-red-400 text-[0.75rem]">
-                                {errors.password}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* forgot password */}
-                    <p className="text-right text-[13px] text-primary">
-                        Forgot Password?
-                    </p>
-
-                    {/* submit button */}
-                    <button
-                        className={`rounded-md py-2 px-2 flex items-center justify-center h-12 gap-2   login-button-glass-background bg-opacity-30 z-50 shadow-lg ${
-                            isValidated ? 'bg-[#9d377ebb]' : 'bg-[#55535523]'
-                        }`}
+                    <form
+                        className="flex w-full flex-col gap-[1.5rem] text-secondary"
+                        onSubmit={handleSubmit}
                     >
-                        <p>Sign in </p>
-                        {loading && (
-                            <CircularProgress size={25} color="inherit" />
-                        )}
-                    </button>
-                </form>
+                        {/* local login */}
+                        <div className="flex items-center justify-center gap-1">
+                            <div className="h-[1.5px]  w-full login-line-gradient"></div>
+                            <p className="w-full text-nowrap text-center">
+                                or login with username
+                            </p>
+                            <div className="h-[1.5px] w-full login-line-gradient"></div>
+                        </div>
+
+                        {/* username */}
+                        <div className="flex flex-col">
+                            <div className="flex gap-3 items-center border-[1px] rounded-md border-lineGrey py-[10px] px-[15px] ">
+                                <span className="">
+                                    <FaUser size={19} />
+                                </span>
+                                <input
+                                    className="outline-none w-full bg-transparent "
+                                    type="text"
+                                    name="username"
+                                    placeholder="john-williams"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            {errors.username && (
+                                <p className="text-red-400 text-[0.75rem]">
+                                    {errors.username}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* password */}
+                        <div className="flex flex-col">
+                            <div className="flex gap-3 items-center justify-between border-[1px] rounded-md border-lineGrey py-[10px] px-[15px] ">
+                                <button type="button" className="">
+                                    <HiLockOpen size={19} />
+                                </button>
+                                <input
+                                    className="outline-none w-full bg-transparent "
+                                    type={revealPassword ? 'text' : 'password'}
+                                    name="password"
+                                    placeholder="password12345"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                />
+                                <button
+                                    onClick={() => toggleRevealPassword()}
+                                    type="button"
+                                    className=""
+                                >
+                                    {revealPassword ? (
+                                        <FaRegEye size={19} />
+                                    ) : (
+                                        <FaRegEyeSlash />
+                                    )}
+                                </button>
+                            </div>
+
+                            {errors.password && (
+                                <p className="text-red-400 text-[0.75rem]">
+                                    {errors.password}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* forgot password */}
+                        <p className="text-right text-[13px] text-primary">
+                            Forgot Password?
+                        </p>
+
+                        {/* submit button */}
+                        <button
+                            className={`rounded-md py-2 px-2 flex items-center justify-center h-12 gap-2   login-button-glass-background bg-opacity-30 z-50 shadow-lg ${
+                                isValidated
+                                    ? 'bg-[#9d377ebb]'
+                                    : 'bg-[#55535523]'
+                            }`}
+                        >
+                            <p>Sign in </p>
+                            {loading && (
+                                <CircularProgress size={25} color="inherit" />
+                            )}
+                        </button>
+                    </form>
+                </div>
             </div>
 
             {alert && (

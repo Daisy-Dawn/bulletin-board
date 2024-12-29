@@ -24,7 +24,7 @@ const generateRefreshToken = (user) => {
 const verifyToken = (req, res, next) => {
     // Get token from cookies or Authorization header
     const token =
-        req.cookies?.userid || req.headers.authorization?.split(' ')[1]
+        req.cookies?.accessToken || req.headers.authorization?.split(' ')[1]
 
     if (!token) {
         return res
