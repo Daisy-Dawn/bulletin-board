@@ -160,14 +160,12 @@ auth.get(
         //     },
         // })
 
-        // Redirect to frontend with query parameters
-        res.redirect(
-            `${
-                process.env.DEVELOPMENT_URL
-            }/auth/google/callback?accessToken=${accessToken}&user=${JSON.stringify(
-                req.user
-            )}`
-        )
+        // Send tokens and user data via headers
+        res.setHeader('x-access-token', accessToken)
+        res.setHeader('x-user', JSON.stringify(req.user))
+
+        // Redirect to frontend without sensitive data in URL
+        res.redirect(`${process.env.DEVELOPMENT_URL}/auth/google/callback`)
     }
 )
 

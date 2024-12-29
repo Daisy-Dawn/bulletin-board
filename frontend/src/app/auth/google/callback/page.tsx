@@ -2,36 +2,48 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import axios from 'axios'
 import PageLoader from '@/components/ui/loader/PageLoader'
 
 const GoogleCallback = () => {
     const router = useRouter()
 
     useEffect(() => {
-        const fetchAuthDataFromUrl = () => {
-            // Get accessToken and user from the URL query parameters
-            const urlParams = new URLSearchParams(window.location.search)
-            const accessToken = urlParams.get('accessToken')
-            const user = urlParams.get('user')
+        const fetchAuthData = async () => {
+            try {
+                // Make the request to the Google callback route
+                const response = await axios.get('/auth/google/callback', {
+                    withCredentials: true, // Ensure cookies are sent with the request
+                })
 
-            if (accessToken && user) {
-                // Parse the user object (since it's passed as a string)
-                const parsedUser = JSON.parse(user)
+                // Get tokens and user data from the response headers
+                const accessToken = response.headers['x-access-token']
+                const user = response.headers['x-user']
 
-                // Store the access token and user data in sessionStorage
-                sessionStorage.setItem('authToken', accessToken)
-                sessionStorage.setItem('user', JSON.stringify(parsedUser))
+                if (accessToken && user) {
+                    // Parse the user object (since it's passed as a string)
+                    const parsedUser = JSON.parse(user)
 
-                // Redirect to the dashboard
-                router.push('/dashboard')
-            } else {
-                console.error('Access token or user data missing in URL')
-                router.push('/auth/login') // Redirect to login if auth fails
+                    // Store the access token and user data in sessionStorage
+                    sessionStorage.setItem('authToken', accessToken)
+                    sessionStorage.setItem('user', JSON.stringify(parsedUser))
+
+                    // Redirect to the dashboard
+                    router.push('/dashboard')
+                } else {
+                    console.error(
+                        'Access token or user data missing in response headers'
+                    )
+                    router.push('/auth/login') // Redirect to login if auth fails
+                }
+            } catch (error) {
+                console.error('Authentication failed:', error)
+                router.push('/auth/login') // Redirect to login if something went wrong
             }
         }
 
-        // Fetch auth data from URL and proceed
-        fetchAuthDataFromUrl()
+        // Fetch auth data and proceed
+        fetchAuthData()
     }, [router])
 
     return <PageLoader />
