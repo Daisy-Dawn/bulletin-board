@@ -137,14 +137,15 @@ auth.get(
             maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
+        res.cookie('user', JSON.stringify(req.user), {
+            httpOnly: true, // Makes the cookie inaccessible to JavaScript
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            sameSite: 'strict',
+            maxAge: 12 * 60 * 60 * 1000, // 12 hours (you can adjust this as necessary)
+        })
+
         // Redirect to frontend with user info
-        res.redirect(
-            `${
-                process.env.DEVELOPMENT_URL
-            }/auth/google/callback?accessToken=${accessToken}&user=${JSON.stringify(
-                req.user
-            )}`
-        )
+        res.redirect(`${process.env.DEVELOPMENT_URL}/auth/google/callback`)
 
         // res.redirect(`http://localhost:3000/auth/google/callback`)
         // res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
