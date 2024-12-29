@@ -3,7 +3,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc'
 import '../../dashboard/index.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { FcUnlock } from 'react-icons/fc'
 import { HiLockOpen } from 'react-icons/hi'
@@ -81,18 +81,18 @@ export default function Login() {
                     'https://bulletin-board-app-backend.onrender.com/auth/login',
                     formData,
                     {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                     }
                 )
-                // Handle successful response
-                console.log('Login successful:', response.data)
+
+                const { token } = response.data
+                // Save token to sessionStorage
+                sessionStorage.setItem('authToken', token)
+
                 alert('Login successful!')
                 router.push('/dashboard')
                 setLoading(false)
             } catch (error: any) {
-                // Handle error response
                 console.error(
                     'Error during login:',
                     error.response?.data || error.message
@@ -103,8 +103,6 @@ export default function Login() {
                 )
                 setLoading(false)
             }
-
-            console.log(formData)
         }
     }
 

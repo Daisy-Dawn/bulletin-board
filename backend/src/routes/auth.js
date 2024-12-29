@@ -1,4 +1,5 @@
 const express = require('express')
+const jwt = require('jsonwebtoken')
 const {
     validateUserCreation,
     handleValidationErrors,
@@ -9,7 +10,11 @@ const {
 } = require('../middlewares/rate-limit-middleware')
 const { hashPassword } = require('../utils/hashPasswords')
 const passport = require('passport')
-const { generateToken, verifyToken } = require('../utils/jwt-config')
+const {
+    generateAccessToken,
+    verifyToken,
+    generateRefreshToken,
+} = require('../utils/jwt-config')
 const { upload } = require('../config/cloudinaryConfig')
 const User = require('../models/User')
 
@@ -60,21 +65,29 @@ auth.post(
                 profilePicture: userProfilePicture,
             })
 
-            // Generate a JWT token for the new user
-            const token = generateToken(newUser)
+            // After successful registration, Generate an access and refresh token for the user
+            const accessToken = generateAccessToken(newUser)
+            const refreshToken = generateRefreshToken(newUser)
 
             // Set the signed cookie
-            res.cookie('userid', token, {
+            res.cookie('userid', accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 signed: true, // Sign the cookie
-                maxAge: 24 * 60 * 60 * 1000, // 1 day
+                maxAge: 12 * 60 * 60 * 1000, // 12 hours
+            })
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
             })
 
             // Respond with the token and user details
             res.status(201).json({
                 message: 'Registration successful',
-                token,
+                accessToken,
                 user: {
                     id: newUser.id,
                     username: newUser.username,
@@ -105,19 +118,28 @@ auth.get(
     passport.authenticate('google', { session: false }),
     (req, res) => {
         console.log('User authenticated:', req.user)
-        const token = generateToken(req.user)
+        // After successful login, Generate an access and refresh token for the user
+        const accessToken = generateAccessToken(req.user)
+        const refreshToken = generateRefreshToken(req.user)
 
         // Set the signed cookie
-        res.cookie('userid', token, {
+        res.cookie('userid', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             signed: true, // Sign the cookie
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            maxAge: 12 * 60 * 60 * 1000, // 12 hours
+        })
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
         res.status(200).json({
             message: 'Google OAuth successful',
-            token,
+            accessToken,
             user: {
                 id: req.user.id,
                 username: req.user.username,
@@ -137,21 +159,29 @@ auth.post(
     passport.authenticate('local'),
 
     async (req, res) => {
-        // Generate a token for the authenticated user
-        const token = generateToken(req.user)
+        // After successful login, Generate an access and refresh token for the user
+        const accessToken = generateAccessToken(req.user)
+        const refreshToken = generateRefreshToken(req.user)
 
         // Set the signed cookie
-        res.cookie('userid', token, {
+        res.cookie('userid', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             signed: true, // Sign the cookie
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            maxAge: 12 * 60 * 60 * 1000, // 12 hours
+        })
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
         // Send the token, user info, and success message as the response
         res.status(200).json({
             message: 'Login successful',
-            token,
+            accessToken,
             user: {
                 id: req.user.id,
                 username: req.user.username,
@@ -170,10 +200,36 @@ auth.post('/auth/logout', verifyToken, (req, res) => {
                 .json({ error: 'Failed to logout', message: err.message })
         res.clearCookie('connect.sid') // clear session cookie
         res.clearCookie('userid') // clear userid cookie
+        res.clearCookie('refreshToken') // clear refreshToken cookie
 
         res.clearCookie('userSession') // Clear the signed cookie
         res.status(200).json({ message: 'Logout successful' })
     })
+})
+
+//GENERATE REFRESH TOKEN
+auth.post('/auth/refresh-token', async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken
+
+    if (!refreshToken)
+        return res.status(401).json({ message: 'Refresh token is missing' })
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+        const user = await User.findById(decoded.id)
+
+        if (!user) {
+            return res.status(403).json({ message: 'Invalid refresh token' })
+        }
+
+        // Generate a new access token
+        const accessToken = generateAccessToken(user)
+
+        res.status(200).json({ accessToken })
+    } catch (error) {
+        console.error('Error refreshing token:', err.message)
+        res.status(403).json({ message: 'Invalid or expired refresh token' })
+    }
 })
 
 module.exports = auth
