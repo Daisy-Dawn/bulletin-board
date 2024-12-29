@@ -10,7 +10,7 @@ import { HiLockOpen } from 'react-icons/hi'
 import { FaRegEye } from 'react-icons/fa'
 import { FaRegEyeSlash } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, Alert } from '@mui/material'
 
 interface LoginFormData {
     username: string
@@ -24,6 +24,10 @@ interface Errors {
 export default function Login() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const [alert, setAlert] = useState<{
+        type: 'success' | 'error'
+        message: string
+    } | null>(null)
     const [formData, setFormData] = useState<LoginFormData>({
         username: '',
         password: '',
@@ -85,11 +89,13 @@ export default function Login() {
                     }
                 )
 
-                const { token } = response.data
-                // Save token to sessionStorage
-                sessionStorage.setItem('authToken', token)
+                console.log('Login response data:', response.data)
 
-                alert('Login successful!')
+                const { accessToken, user } = response.data
+                sessionStorage.setItem('authToken', accessToken)
+                sessionStorage.setItem('user', user)
+
+                setAlert({ type: 'success', message: 'Login successful!' })
                 router.push('/dashboard')
                 setLoading(false)
             } catch (error: any) {
@@ -97,14 +103,20 @@ export default function Login() {
                     'Error during login:',
                     error.response?.data || error.message
                 )
-                alert(
-                    error.response?.data?.message ||
-                        'An error occurred during login.'
-                )
+                setAlert({
+                    type: 'error',
+                    message:
+                        error.response?.data?.message ||
+                        'An error occurred during login.',
+                })
                 setLoading(false)
             }
+        } else {
+            setAlert({ type: 'error', message: 'Please fill in all fields.' })
         }
     }
+
+    //google login
 
     return (
         <div className="min-h-screen login-background flex justify-center items-center relative">
@@ -154,7 +166,13 @@ export default function Login() {
                     </div>
 
                     {/* google */}
-                    <button className="rounded-lg py-2 px-2 flex items-center justify-center h-10 gap-2 hover:bg-blue-700 bg-royalBlue">
+                    <button
+                        className="rounded-lg py-2 px-2 flex items-center justify-center h-10 gap-2 hover:bg-blue-700 bg-royalBlue"
+                        onClick={() =>
+                            (window.location.href =
+                                'https://bulletin-board-app-backend.onrender.com/auth/google')
+                        }
+                    >
                         <FcGoogle />
                         <p>Sign in with Google</p>
                     </button>
@@ -242,6 +260,19 @@ export default function Login() {
                     </button>
                 </form>
             </div>
+
+            {alert && (
+                <div className="absolute z-50 top-3 w-full flex justify-center">
+                    <Alert
+                        variant="filled"
+                        className="w-1/2"
+                        onClose={() => setAlert(null)}
+                        severity={alert.type}
+                    >
+                        {alert.message}
+                    </Alert>
+                </div>
+            )}
         </div>
     )
 }

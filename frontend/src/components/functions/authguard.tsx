@@ -62,7 +62,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     }, [])
 
     // Show a loading spinner while authentication is being verified
-    if (isLoading) return <PageLoader />
+    if (!isAuthenticated) return <PageLoader />
 
-    return <>{isAuthenticated && children}</>
+    return <>{children}</>
+
+    // Show a loading spinner while authentication is being verified
+    // if (isLoading) return <PageLoader />
+
+    // return <>{isAuthenticated && children}</>
 }

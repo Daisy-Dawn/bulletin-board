@@ -137,18 +137,30 @@ auth.get(
             maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         })
 
-        res.status(200).json({
-            message: 'Google OAuth successful',
-            accessToken,
-            user: {
-                id: req.user.id,
-                username: req.user.username,
-                displayName: req.user.displayName,
-                email: req.user.email,
-                location: req.user.location || 'anywhere',
-                profilePicture: req.user.profilePicture || '',
-            },
-        })
+        // Redirect to frontend with user info
+        res.redirect(
+            `${
+                process.env.DEVELOPMENT_URL
+            }/auth/google/callback?accessToken=${accessToken}&user=${JSON.stringify(
+                req.user
+            )}`
+        )
+
+        // res.redirect(`http://localhost:3000/auth/google/callback`)
+        // res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+
+        // res.status(200).json({
+        //     message: 'Google OAuth successful',
+        //     accessToken,
+        //     user: {
+        //         id: req.user.id,
+        //         username: req.user.username,
+        //         displayName: req.user.displayName,
+        //         email: req.user.email,
+        //         location: req.user.location || 'anywhere',
+        //         profilePicture: req.user.profilePicture || '',
+        //     },
+        // })
     }
 )
 
